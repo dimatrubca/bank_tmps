@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank.Domain.BankAccounts
+namespace BankApp.Domain.BankAccounts
 {
      class BankAccountContract : IPrototype
      {

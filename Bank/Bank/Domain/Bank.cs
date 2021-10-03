@@ -1,15 +1,23 @@
-﻿using Bank.Domain.Cards;
+﻿using BankApp.Data;
+using BankApp.Domain.Cards;
+using BankApp.Domain.Credits;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Reflection;
 
-namespace Bank.Domain
+namespace BankApp.Domain
 {
     class Bank
     {
 
-        private static readonly Bank instance = new Bank();
-        static Bank() { }
+        private static readonly Bank instance;
+        static Bank() { 
+            instance = new Bank();
+
+            instance.clients = DataReader.ReadClients();
+        }
 
         public static Bank Instance
         {
@@ -18,6 +26,9 @@ namespace Bank.Domain
                 return instance;
             }
         }
+
+        public List<Client> clients;
+        public List<Card> issuedCards = new List<Card>();
 
         private Bank() { }
         public void ExecuteCardTransfer(Card senderCard, Card receiverCard, decimal amount)
@@ -31,23 +42,52 @@ namespace Bank.Domain
             receiverCard.Balance += amount;
         }
 
-        public Client AuthenticateClient()
+        public BankServicesFactory AuthenticateClient()
         {
 
             Console.WriteLine("Please, enter your ID");
+            string input = Console.ReadLine();
 
-            // todo: read existing users, create new if not exists
-            Console.WriteLine("Welcome to our bank!\nPlease, enter your full name: ");
-
-            Client client = new Client
+            Client client = null;
+            foreach (var currClient in clients)
             {
-                Id = "auto-generated-id",
-                FirstName = "Dima",
-                LastName = "Trubca",
-                CashAmount = 1500
-            };
+                if (currClient.Id == input)
+                {
+                    Console.WriteLine($"User found. Details:\n");
+                    Console.WriteLine(currClient);
 
-            return client;
+                    client = currClient;
+                    break;
+                }
+            }
+
+            if (client == null)
+            {
+                Console.WriteLine("Welcome to our bank!\nPlease, enter your first name: ");
+                string firstName = Console.ReadLine();
+                Console.WriteLine("Enter your last name: ");
+                string lastName = Console.ReadLine();
+                Console.WriteLine("Enter your ID: ");
+                string id = Console.ReadLine();
+                Console.WriteLine("How much cash do you have?");
+                int cashAmount = 0;
+                Int32.TryParse(Console.ReadLine(), out cashAmount);
+
+                client = new Client
+                {
+                    Id = id,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    CashAmount = cashAmount
+                };
+            }
+
+            BankServicesFactory bankServicesFactory;
+
+            if (client.IsVip) bankServicesFactory = new BankVipServicesFactory(client);
+            else bankServicesFactory = new BankSimpleServicesFactory(client);
+
+            return bankServicesFactory;
         }
 
         public void Open()
@@ -58,7 +98,7 @@ namespace Bank.Domain
                 Console.WriteLine("===========================");
                 Console.WriteLine("Please, select an operation (enter a number):");
                 Console.WriteLine("1. Pass Authentication");
-                Console.WriteLine("4. Exit");
+                Console.WriteLine("2. Exit");
                 Console.WriteLine();
 
                 string userChoice = Console.ReadLine();
@@ -66,27 +106,89 @@ namespace Bank.Domain
                 switch (userChoice)
                 {
                     case "1":
+                        BankServicesFactory bankServicesFactory = this.AuthenticateClient();
+                        this.AuthenticatedLoop(bankServicesFactory);
                         break;
                     case "2":
                         break;
-                    case "3":
-                        break;
-                    case "4":
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
                         break;
                 }
 
             }
         }
 
-        public void AuthenticatedLoop()
+
+        public void IssueCard(BankServicesFactory bankServicesFactory) {
+
+            while (true)
+            {
+                Console.WriteLine("Please, select an operation: ");
+                Console.WriteLine("1. Get credit card");
+                Console.WriteLine("2. Get debit card");
+                Console.WriteLine("3. Return to previous step");
+
+                string userChoice = Console.ReadLine();
+
+                switch (userChoice)
+                {
+                    case "1":
+                        var debitCard = bankServicesFactory.CreateDebitCard();
+                        this.issuedCards.Add(debitCard);
+                        Console.WriteLine($"{debitCard.Type} debit card was successfully issued to client with id {debitCard.Owner.Id}\n");
+                        break;
+                    case "2":
+                        var creditCard = bankServicesFactory.CreateCreditCard();
+                        this.issuedCards.Add(creditCard);
+                        Console.Write($"{creditCard.Type} credit card was successfully issued to client with id {creditCard.Owner.Id}\n");
+                        break;
+                    case "3":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
+                        break;
+                }
+            }
+
+
+        }
+
+        public Credit TakeLoan(BankServicesFactory bankServicesFactory)
+        {
+            Credit credit = bankServicesFactory.CreateCredit();
+
+            return credit;
+        }
+
+
+        public void AuthenticatedLoop(BankServicesFactory bankServicesFactory)
         {
             while (true)
             {
                 Console.WriteLine("Please, selected an operation: ");
                 Console.WriteLine("Open Bank Account");
                 Console.WriteLine("1 - Get Card");
-                Console.WriteLine("2 - Exchange money");
-                Console.WriteLine("3 - Take a loan");
+                Console.WriteLine("2 - Take a loan");
+
+                string userChoice = Console.ReadLine();
+
+                switch (userChoice)
+                {
+                    case "1":
+                        this.IssueCard(bankServicesFactory);
+                        break;
+                    case "2":
+                        Credit credit = bankServicesFactory.CreateCredit();
+                        Console.WriteLine($"Credit issued successfully");
+                        Console.WriteLine("Details: ");
+                        Console.WriteLine(credit);
+                        
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
+                        break;
+                }
             }
         }
     }

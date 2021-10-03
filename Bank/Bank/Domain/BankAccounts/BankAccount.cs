@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank.Domain.BankAcounts
+namespace BankApp.Domain.BankAcounts
 {
      class BankAccount
      {

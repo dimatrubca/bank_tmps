@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank.Domain.Cards
+namespace BankApp.Domain.Cards
 {
      enum CardType
      {

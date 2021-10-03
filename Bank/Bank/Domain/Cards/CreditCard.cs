@@ -1,14 +1,15 @@
-﻿using System;
+﻿using BankApp.Domain.Credits;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank.Domain.Cards
+namespace BankApp.Domain.Cards
 {
-     class CreditCard : Card, ICreditCard
+     class CreditCard : Card
      {
-          public CreditCard(Bank issuer, Client owner, CardType type, 
+          public CreditCard(Client owner, CardType type, 
                decimal transactionFee, decimal annualFee, decimal balance,
-               decimal bonusPoints, decimal spendingLimit) : base(issuer, owner, type, transactionFee, annualFee, balance)
+               decimal bonusPoints, decimal spendingLimit) : base(owner, type, transactionFee, annualFee, balance)
           {
                BonusPoints = bonusPoints;
                SpendingLimit = spendingLimit;

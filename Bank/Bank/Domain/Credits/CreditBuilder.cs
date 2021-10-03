@@ -1,43 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Bank.Domain.Credits
+namespace BankApp.Domain.Credits
 {
-     class CreditBuilder
-     {
-          private readonly Credit _credit;
+    class CreditBuilder : ICreditBuilder
+    {
+        private readonly Credit _credit;
 
-          public void SetReceiver(Client client) 
-          {
-               _credit.Receiver = client;
-          }
+        public CreditBuilder()
+        {
+            _credit = new Credit();
+        }
 
-          public void DetermineCreditAmount()
-          {
-               Console.WriteLine("Enter the loan amount: ");
-               string userInput = Console.ReadLine();
-               decimal amount = Convert.ToDecimal(userInput);
+        public ICreditBuilder SetReceiver(Client client)
+        {
+            _credit.ReceiverId = client.Id;
 
-               _credit.Amount = amount;
-          }
+            return this;
+        }
 
-          public void DeterminePeriod()
-          {
-               Console.WriteLine("Enter loan period (in months)");
-               string userInput = Console.ReadLine();
-               int amount = Convert.ToInt32(userInput);
+        public ICreditBuilder DetermineCreditAmount()
+        {
+            Console.WriteLine("Enter the loan amount: ");
+            string userInput = Console.ReadLine();
+            decimal amount = Convert.ToDecimal(userInput);
 
-               _credit.Duration = amount;
-          }
+            _credit.Amount = amount;
 
-          public void DetermineGuarantor()
-          {
-               Console.WriteLine("Enter the id of the guarantor:");
+            return this;
+        }
 
-               string userInput = Console.ReadLine();
-               //TODO: check if client with such id exiss
-               _credit.Gu
-          }
-     }
+        public ICreditBuilder DeterminePeriod()
+        {
+            Console.WriteLine("Enter loan period (in months)");
+            string userInput = Console.ReadLine();
+            int amount = Convert.ToInt32(userInput);
+
+            _credit.Duration = amount;
+
+            return this;
+        }
+
+        public ICreditBuilder SetMonthlyInterest(decimal monthlyInterest)
+        {
+            _credit.MonthlyInterest = monthlyInterest;
+
+            return this;
+        }
+
+        public ICreditBuilder DetermineGuarantor()
+        {
+            Console.WriteLine("Enter the id of the guarantor:");
+
+            string userInput = Console.ReadLine();
+            //TODO: check if client with such id exiss
+            _credit.GuarantorId = userInput;
+            return this;
+        }
+
+        public Credit Build()
+        {
+            return _credit;
+        }
+    }
 }

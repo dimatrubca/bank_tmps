@@ -1,0 +1,16 @@
+﻿[
+  {
+    "ID": "34812349",
+    "firstName": "Ion",
+    "lastName": "Rabiu",
+    "cashAmount": 450,
+    "isVip":  true
+  },
+  {
+    "ID": "12345678",
+    "firstName": "Valentin",
+    "lastName": "Efros",
+    "cashAmount": 1500,
+    "isVip": false
+  }
+]

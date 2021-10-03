@@ -1,14 +1,16 @@
-﻿using System;
+﻿using BankApp.Domain;
+using System;
 
-namespace Bank
+namespace BankApp
 {
-     class Program
-     {
-          static void Main(string[] args)
-          {
-               Console.WriteLine("Hello World!");
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Bank bank = Bank.Instance;
+            bank.Open();
 
 
           }
-     }
+    }
 }

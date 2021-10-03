@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank.Domain.Cards
+namespace BankApp.Domain.Cards
 {
-     class DebitCard : Card, IDebitCard
+     class DebitCard : Card
      {
-          public DebitCard(Bank issuer, Client owner, CardType type, decimal transactionFee, decimal annualFee, decimal balance) : base(issuer, owner, type, transactionFee, annualFee, balance)
+          public DebitCard(Client owner, CardType type, decimal transactionFee, decimal annualFee, decimal balance) : base(owner, type, transactionFee, annualFee, balance)
           {
           }
 

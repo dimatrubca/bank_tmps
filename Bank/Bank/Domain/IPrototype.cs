@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Bank.Domain
+
+namespace BankApp.Domain
 {
-     interface IPrototype
-     {
-          public IPrototype Clone();
-     }
+    interface IPrototype
+    {
+        public IPrototype Clone();
+    }
 }
