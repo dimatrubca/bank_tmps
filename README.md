@@ -55,9 +55,9 @@ abstract class BankServicesFactory
 
  }
  ```
- It's extended by the **BankSimpleServicesFactory**, which is intended to provide services for ussual users, and **BankVipClientFactory** - which created objects intended for VIP users.
+ It's extended by the **BankSimpleServicesFactory**, which is intended to provide services for ussual users, and **BankVipClientFactory** - which creates objects intended for VIP users.
 <br/>
-As issuing a credit is a complex process, the steps of which can differ depending on the type of the user, it was decided to implement the creation of *Credit* objects using the builder pattern.
+As issuing a credit is a complex process, the steps of which can differ depending on the type of the user, it was decided to implement the creation of *Credit* objects using the **builder pattern**.
 Below, is defined the interface of the CreditBuilder class.
 ```
 interface ICreditBuilder
