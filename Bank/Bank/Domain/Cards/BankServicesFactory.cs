@@ -10,7 +10,7 @@ namespace BankApp.Domain.Cards
         }
         public abstract CreditCard CreateCreditCard();
         public abstract DebitCard CreateDebitCard();
-        public abstract Credit CreateCredit();
+        public abstract Credit CreateCredit();  
 
         public Client Client { get; set; }
 
