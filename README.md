@@ -102,3 +102,9 @@ public override Credit CreateCredit()
 ## Results
 The resulting application is a bank simulator. For now, you can perform such basic actions as authentication, getting a credit/debit card and taking a loan. The existing users are defined inside the *Data/cliens.json* file, but new ones 
 can also be created.
+
+###  Authentication and issuing a debit card exaple
+<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/intro_debit_card_flow.png" width="450" title="hover text">
+
+### Taking a load example
+<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/take_loan_flow.png" width="450" title="hover text">
