@@ -7,12 +7,12 @@ namespace BankApp.Domain.Cards
         public BankVipServicesFactory(Client client):base(client) { }
         public override CreditCard CreateCreditCard()
         {
-            return new CreditCard(this.Client, CardType.Platinum, 0.015m, 450, 0, 1, 10000);
+            return new CreditCard(this.Client, new PlatinumTier(), 0.015m, 450, 0, 1, 10000);
         }
 
         public override DebitCard CreateDebitCard()
         {
-            return new DebitCard(this.Client, CardType.Platinum, 0.015m, 450, 0);
+            return new DebitCard(this.Client, new PlatinumTier(), 0.015m, 450, 0);
         }
 
         public override Credit CreateCredit()

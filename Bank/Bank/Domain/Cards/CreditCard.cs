@@ -7,9 +7,9 @@ namespace BankApp.Domain.Cards
 {
      class CreditCard : Card
      {
-          public CreditCard(Client owner, CardType type, 
+          public CreditCard(Client owner, Tier tier, 
                decimal transactionFee, decimal annualFee, decimal balance,
-               decimal bonusPoints, decimal spendingLimit) : base(owner, type, transactionFee, annualFee, balance)
+               decimal bonusPoints, decimal spendingLimit) : base(owner, tier, transactionFee, annualFee, balance)
           {
                BonusPoints = bonusPoints;
                SpendingLimit = spendingLimit;

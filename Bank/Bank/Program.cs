@@ -7,10 +7,8 @@ namespace BankApp
     {
         static void Main(string[] args)
         {
-            Bank bank = Bank.Instance;
-            bank.Open();
-
-
+            BankManager bankManager = new BankManager();
+            bankManager.Open(Bank.Instance);
           }
     }
 }

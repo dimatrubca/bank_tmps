@@ -11,12 +11,12 @@ namespace BankApp.Domain.Cards
         public BankSimpleServicesFactory(Client client):base(client) { }
         public override CreditCard CreateCreditCard()
         {
-            return new CreditCard(Client, CardType.Gold, 0.025m, 450, 0, 0.5m, 1000);
+            return new CreditCard(Client, new GoldTier(), 0.025m, 450, 0, 0.5m, 1000);
         }
 
         public override DebitCard CreateDebitCard()
         {
-            return new DebitCard(this.Client, CardType.Gold, 0.025m, 450, 0);
+            return new DebitCard(this.Client, new GoldTier(), 0.025m, 450, 0);
         }
 
         public override Credit CreateCredit()
