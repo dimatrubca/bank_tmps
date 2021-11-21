@@ -3,13 +3,16 @@
 ### Author: Trubca Dmitri
 ### Domain: Bank 
 ## Theory
-In this project 3 different creational design patterns were implemented: Singleton, Builder and Abstract Factory.<br/>
-Singleton is a creational design patterns which ensures that only one object of its kind exists and provides a single point of access to it for any other code. 
+Creational patterns provide various object creation mechanisms, which increase flexibility and reuse of existing code.<br/>
+Singleton is a creational design patterns which ensures that only one object of its kind exists and provides a single point of access to it for any other code. Builder is a creational design pattern, which allows constructing complex objects step by step. Abstract Factory is a creational design pattern, which solves the problem of creating entire product families without specifying their concrete classes.
 
 ## Implementation
+In this project 3 different creational design patterns were implemented: Singleton, Builder and Abstract Factory.<br/>
 In this application, the instance of the
 "Bank" class was chosen to be implemented as a singleton, because the application logic requires exactly one instance of this class during the entire lifetime of the application,
 and it has to be accessed oftenly from other classes.<br/>
+
+**`Bank.cs`**
 ```
 class Bank
 {
@@ -55,9 +58,9 @@ abstract class BankServicesFactory
 
  }
  ```
- It's extended by the **BankSimpleServicesFactory**, which is intended to provide services for ussual users, and **BankVipClientFactory** - which created objects intended for VIP users.
+ It's extended by the **BankSimpleServicesFactory**, which is intended to provide services for ussual users, and **BankVipClientFactory** - which creates objects intended for VIP users.
 <br/>
-As issuing a credit is a complex process, the steps of which can differ depending on the type of the user, it was decided to implement the creation of *Credit* objects using the builder pattern.
+As issuing a credit is a complex process, the steps of which can differ depending on the type of the user, it was decided to implement the creation of *Credit* objects using the **builder pattern**.
 Below, is defined the interface of the CreditBuilder class.
 ```
 interface ICreditBuilder
@@ -102,3 +105,9 @@ public override Credit CreateCredit()
 ## Results
 The resulting application is a bank simulator. For now, you can perform such basic actions as authentication, getting a credit/debit card and taking a loan. The existing users are defined inside the *Data/cliens.json* file, but new ones 
 can also be created.
+
+###  Authentication and issuing a debit card example
+<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/intro_debit_card_flow.png" width="450" title="hover text">
+
+### Taking a loan example
+<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/take_loan_flow.png" width="450" title="hover text">
