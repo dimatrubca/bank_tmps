@@ -11,7 +11,7 @@ In this project 3 different structural design patterns were implemented: Proxy, 
 The protected proxy pattern was chosen in order to allow performing safe transfer operations between cards. The CardGuardProxy should ensure the receiver of the money is not inside the blacklist for a successful transfer.
 and it has to be accessed oftenly from other classes.<br/>
 
-**`CardGuardProxy.cs`**
+**`Domain/Cards/CardGuardProxy.cs`**
 ```
     class CardGuardProxy : ICard
     {
@@ -41,6 +41,8 @@ and it has to be accessed oftenly from other classes.<br/>
 
 BankManager class was implemented using **Facade Pattern**. It provides a simple interface to a complex subsystem for bank management, such as Open (bank), Authenticate Client or Issue Card.
 <br/>
+
+**`BankManager.cs`**
 ```
     class BankManager
     {
@@ -176,7 +178,7 @@ BankManager class was implemented using **Facade Pattern**. It provides a simple
 ```
 The **decorator** pattern is used to add additional behaviour for bank cards during runtime. Now, it's possible to use the cashback features (for a card you can register multiple cashback operators (through decorator), which track all of the money transfers and return a part of the purchase to the owner.
 
-**`BankSimpleServicesFactory.cs`**
+**`Domain/Cards/CardCashBackDecorator.cs`**
 ```
     class CardCashBackDecorator : ICard
     {
