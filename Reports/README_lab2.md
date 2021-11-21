@@ -1,113 +1,205 @@
-# TMPS. Laboratory work number 1. 
-### Topic: Creational Design Patterns.
+# TMPS. Laboratory work number 2. 
+### Topic: Structural Design Patterns.
 ### Author: Trubca Dmitri
 ### Domain: Bank 
 ## Theory
-Creational patterns provide various object creation mechanisms, which increase flexibility and reuse of existing code.<br/>
-Singleton is a creational design patterns which ensures that only one object of its kind exists and provides a single point of access to it for any other code. Builder is a creational design pattern, which allows constructing complex objects step by step. Abstract Factory is a creational design pattern, which solves the problem of creating entire product families without specifying their concrete classes.
+Structural patterns explain how to assemble objects and classes into larger structures while keeping these structures flexible and efficient.<br/>
+Decorator is a structural design pattern that lets you attach new behaviors to objects by placing these objects inside special wrapper objects that contain the behaviors. Proxy is a structural design pattern that lets you provide a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request gets through to the original object. Facade is a structural design pattern that provides a simplified interface to a library, a framework, or any other complex set of classes.
 
 ## Implementation
-In this project 3 different creational design patterns were implemented: Singleton, Builder and Abstract Factory.<br/>
-In this application, the instance of the
-"Bank" class was chosen to be implemented as a singleton, because the application logic requires exactly one instance of this class during the entire lifetime of the application,
+In this project 3 different structural design patterns were implemented: Proxy, Facade and decorator<br/>
+The protected proxy pattern was chosen in order to allow performing safe transfer operations between cards. The CardGuardProxy should ensure the receiver of the money is not inside the blacklist for a successful transfer.
 and it has to be accessed oftenly from other classes.<br/>
 
-**`Bank.cs`**
+**`CardGuardProxy.cs`**
 ```
-class Bank
-{
-
-    private static readonly Bank instance;
-    static Bank() { 
-        instance = new Bank();
-
-        instance.clients = DataReader.ReadClients();
-    }
-
-    public static Bank Instance
+    class CardGuardProxy : ICard
     {
-        get
+        private static List<string> blackList;
+        private ICard _card;
+
+        static CardGuardProxy()
         {
-            return instance;
+            blackList = new List<string> { "1232323567", "12345123" };
+        }
+
+        public CardGuardProxy(ICard card)
+        {
+            _card = card;
+        }
+
+        public void TransferMoney(Card receiverCard, decimal amount)
+        {
+            if (!blackList.Contains(receiverCard.Owner.Id))
+            {
+                _card.TransferMoney(receiverCard, amount);
+            }
+        }
+
+    }
+```
+
+BankManager class was implemented using **Facade Pattern**. It provides a simple interface to a complex subsystem for bank management, such as Open (bank), Authenticate Client or Issue Card.
+<br/>
+```
+    class BankManager
+    {
+        public void Open(Bank bank)
+        {
+            while (true)
+            {
+                Console.WriteLine("Welcome to the ImperioBank");
+                Console.WriteLine("===========================");
+                Console.WriteLine("Please, select an operation (enter a number):");
+                Console.WriteLine("1. Pass Authentication");
+                Console.WriteLine("2. Exit");
+                Console.WriteLine();
+
+                string userChoice = Console.ReadLine();
+
+                switch (userChoice)
+                {
+                    case "1":
+                        Client client = this.AuthenticateClient(bank);
+
+                        this.AuthenticatedLoop(client, bank);
+                        break;
+                    case "2":
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
+                        break;
+                }
+
+            }
+        }
+
+        public Client AuthenticateClient(Bank bank)
+        {
+            Console.WriteLine("Please, enter your ID");
+            string input = Console.ReadLine();
+
+            Client client = bank.AuthenticateClient(input);
+
+            if (client == null)
+            {
+                Console.WriteLine("Welcome to our bank!\nPlease, enter your first name: ");
+                string firstName = Console.ReadLine();
+                Console.WriteLine("Enter your last name: ");
+                string lastName = Console.ReadLine();
+                Console.WriteLine("Enter your ID: ");
+                string id = Console.ReadLine();
+                Console.WriteLine("How much cash do you have?");
+                int cashAmount = 0;
+                Int32.TryParse(Console.ReadLine(), out cashAmount);
+
+                client = bank.RegisterClient(firstName, lastName, id, cashAmount);
+            }
+
+            return client;
+        }
+        public void AuthenticatedLoop(Client client, Bank bank)
+        {
+            BankServicesFactory bankServicesFactory;
+
+            if (client.IsVip) bankServicesFactory = new BankVipServicesFactory(client);
+            else bankServicesFactory = new BankSimpleServicesFactory(client);
+
+            while (true)
+            {
+                Console.WriteLine("Please, selected an operation: ");
+                Console.WriteLine("Open Bank Account");
+                Console.WriteLine("1 - Get Card");
+                Console.WriteLine("2 - Take a loan");
+
+                string userChoice = Console.ReadLine();
+
+                switch (userChoice)
+                {
+                    case "1":
+                        this.IssueCard(bankServicesFactory, bank);
+                        break;
+                    case "2":
+                        Credit credit = bankServicesFactory.CreateCredit();
+                        Console.WriteLine($"Credit issued successfully");
+                        Console.WriteLine("Details: ");
+                        Console.WriteLine(credit);
+
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
+                        break;
+                }
+            }
+        }
+
+        public void IssueCard(BankServicesFactory bankServicesFactory, Bank bank)
+        {
+
+            while (true)
+            {
+                Console.WriteLine("Please, select an operation: ");
+                Console.WriteLine("1. Get credit card");
+                Console.WriteLine("2. Get debit card");
+                Console.WriteLine("3. Return to previous step");
+
+                string userChoice = Console.ReadLine();
+
+                Card card = null;
+
+                switch (userChoice)
+                {
+                    case "1":
+                        card = bankServicesFactory.CreateDebitCard();
+                        Console.WriteLine($"{card.Tier} debit card was successfully issued to client with id {card.Owner.Id}\n");
+                        break;
+                    case "2":
+                        card = bankServicesFactory.CreateCreditCard();
+                        Console.Write($"{card.Tier} credit card was successfully issued to client with id {card.Owner.Id}\n");
+                        break;
+                    case "3":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option selected, try again...");
+                        break;
+                }
+                
+                if (card != null)
+                {
+                    bank.RegisterCard(card);
+                }
+            }
+
+
         }
     }
-
-    public List<Client> clients;
-    
-    ...
-}
 ```
-As there are 2 different types of bank clients (VIP clients and simple clients), both of which have access to the same services, with the exception that VIP clients get a slighly improved version
-(Platinum Credit cards for VIP clients vs Gold Credit cards for simple clients, Platinum Debit cards for VIP clients vs Gold Debit cards for simple clients,
-different interest and creation requirements for credits taken by VIP vs simple users), it was chosen to use the abstract factory pattern, which would simplify producing those related objects, without specifying their concrete type, depending on the type of client.
-<br/>
-Abstract factory (BankServicesFactory) is represented bellow.
-
-```
-abstract class BankServicesFactory
-{
-    public BankServicesFactory(Client client)
-    {
-        Client = client;
-    }
-    public abstract CreditCard CreateCreditCard();
-    public abstract DebitCard CreateDebitCard();
-    public abstract Credit CreateCredit();  
-
-    public Client Client { get; set; }
-
- }
- ```
- It's extended by the **BankSimpleServicesFactory**, which is intended to provide services for ussual users, and **BankVipClientFactory** - which creates objects intended for VIP users.
-<br/>
-As issuing a credit is a complex process, the steps of which can differ depending on the type of the user, it was decided to implement the creation of *Credit* objects using the **builder pattern**.
-Below, is defined the interface of the CreditBuilder class.
-```
-interface ICreditBuilder
-{
-    public ICreditBuilder SetReceiver(Client client);
-    public ICreditBuilder DetermineCreditAmount();
-    public ICreditBuilder DeterminePeriod();
-    public ICreditBuilder DetermineGuarantor();
-    public ICreditBuilder SetMonthlyInterest(decimal amount);
-    public Credit Build();
-}
-```
-The builder pattern is used together with the abstract factory method.
-Depending on the type of the user, the steps of constructing an instance of *Credit* class differ. (e.g. VIP users don't have to specify a guarantor, the interest rate for vip users is lower...).
-
+The **decorator** pattern is used to add additional behaviour for bank cards during runtime. Now, it's possible to use the cashback features (for a card you can register multiple cashback operators (through decorator), which track all of the money transfers and return a part of the purchase to the owner.
 
 **`BankSimpleServicesFactory.cs`**
 ```
-public override Credit CreateCredit()
-{
-    ICreditBuilder creditBuilder = new CreditBuilder();
+    class CardCashBackDecorator : ICard
+    {
+        private ICard _card;
+        public decimal Balance { get =>  _card.Balance; set => _card.Balance = value; }
+        public decimal CashbackPct { get; set; }
+        public string OrgName;
 
-    var credit = creditBuilder.SetReceiver(this.Client).DetermineCreditAmount().DeterminePeriod().DetermineGuarantor().SetMonthlyInterest(2).Build();
 
-    return credit;
-}
+        public CardCashBackDecorator(ICard card, decimal cashbackPct, string orgName)
+        {
+            _card = card;
+            CashbackPct = cashbackPct;
+            OrgName = orgName;
+        }
+
+        public void TransferMoney(Card receiverCard, decimal amount)
+        {
+            _card.TransferMoney(receiverCard, amount);
+
+            decimal bonus = amount * CashbackPct;
+            _card.Balance += bonus;
+        }
+    }
 ```
 <br>
-
-**`BankVipServicesFactory.cs`**
-```
-        public override Credit CreateCredit()
-        {
-            ICreditBuilder creditBuilder = new CreditBuilder();
-
-            var credit = creditBuilder.SetReceiver(this.Client).DetermineCreditAmount().DeterminePeriod().SetMonthlyInterest(1).Build();
-
-            return credit;
-        }
-```
-
-## Results
-The resulting application is a bank simulator. For now, you can perform such basic actions as authentication, getting a credit/debit card and taking a loan. The existing users are defined inside the *Data/cliens.json* file, but new ones 
-can also be created.
-
-###  Authentication and issuing a debit card example
-<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/intro_debit_card_flow.png" width="450" title="hover text">
-
-### Taking a loan example
-<img src="https://github.com/dimatrubca/bank_tmps/blob/master/images/take_loan_flow.png" width="450" title="hover text">
