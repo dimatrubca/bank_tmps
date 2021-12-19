@@ -12,6 +12,7 @@ namespace BankApp.Domain.Cards
             TransactionFee = transactionFee;
             AnnualFee = annualFee;
             Balance = balance;
+            clientNotificationStrategy = new EmailClientNotification();
         }
 
         public Bank Issuer { get; set; }
@@ -20,14 +21,21 @@ namespace BankApp.Domain.Cards
         public decimal TransactionFee { get; set; }
         public decimal AnnualFee { get; set; }
         public decimal Balance { get; set; }
-        public ClientNotificationStrategy clientNotificationStrategy;
 
         public abstract decimal SpendingBalance();
+
+        public ClientNotificationStrategy clientNotificationStrategy;
+
 
         public void TransferMoney(Card card, decimal amount)
         {
             Issuer.ExecuteCardTransfer(this, card, amount);
             clientNotificationStrategy.NotifyPayment(Owner, card.Owner, amount);
+        }
+
+        public void SetClientNotificationStrategy(ClientNotificationStrategy strategy)
+        {
+            this.clientNotificationStrategy = strategy;
         }
 
     }
