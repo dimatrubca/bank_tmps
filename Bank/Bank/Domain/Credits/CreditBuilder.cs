@@ -1,4 +1,5 @@
 ﻿using System;
+using BankApp.Domain.Clients;
 
 namespace BankApp.Domain.Credits
 {

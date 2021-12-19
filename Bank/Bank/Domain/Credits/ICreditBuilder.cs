@@ -1,4 +1,6 @@
-﻿namespace BankApp.Domain.Credits
+﻿using BankApp.Domain.Clients;
+
+namespace BankApp.Domain.Credits
 {
     interface ICreditBuilder
     {

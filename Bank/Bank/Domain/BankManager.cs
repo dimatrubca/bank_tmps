@@ -1,8 +1,7 @@
 ﻿using BankApp.Domain.Cards;
 using BankApp.Domain.Credits;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using BankApp.Domain.Clients;
 
 namespace BankApp.Domain
 {

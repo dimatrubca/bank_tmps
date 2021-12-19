@@ -1,8 +1,10 @@
-﻿namespace BankApp.Domain.Cards
+﻿using BankApp.Domain.Clients;
+
+namespace BankApp.Domain.Cards
 {
     abstract class Card : ICard
     {
-        protected Card(Client owner, Tier tier, decimal transactionFee, decimal annualFee, decimal balance)
+        protected Card(Client owner, Tier tier, decimal transactionFee, decimal annualFee, decimal balance) 
         {
             Issuer = Bank.Instance;
             Owner = owner;
@@ -18,12 +20,14 @@
         public decimal TransactionFee { get; set; }
         public decimal AnnualFee { get; set; }
         public decimal Balance { get; set; }
+        public ClientNotificationStrategy clientNotificationStrategy;
 
         public abstract decimal SpendingBalance();
 
         public void TransferMoney(Card card, decimal amount)
         {
             Issuer.ExecuteCardTransfer(this, card, amount);
+            clientNotificationStrategy.NotifyPayment(Owner, card.Owner, amount);
         }
 
     }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using BankApp.Domain.Clients;
 using System.Text;
 
 namespace BankApp.Domain.Cards

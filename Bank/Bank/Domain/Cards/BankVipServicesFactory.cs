@@ -1,4 +1,5 @@
 ﻿using BankApp.Domain.Credits;
+using BankApp.Domain.Clients;
 
 namespace BankApp.Domain.Cards
 {

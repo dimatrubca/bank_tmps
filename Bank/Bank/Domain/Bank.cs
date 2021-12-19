@@ -1,11 +1,8 @@
 ﻿using BankApp.Data;
 using BankApp.Domain.Cards;
 using BankApp.Domain.Credits;
-using Newtonsoft.Json;
-using System;
+using BankApp.Domain.Clients;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 
 namespace BankApp.Domain
 {
@@ -38,7 +35,7 @@ namespace BankApp.Domain
                 throw new InsufficientFundsException(senderCard.SpendingBalance(), amount);
             }
 
-            senderCard.Balance -= amount;
+            senderCard.Balance -= amount;       
             receiverCard.Balance += amount;
         }
 
@@ -49,7 +46,9 @@ namespace BankApp.Domain
                 Id = id,
                 FirstName = firstName,
                 LastName = lastName,
-                CashAmount = cashAmount
+                CashAmount = cashAmount,
+                Email = "sample@gmail.com",
+                Phone = "+373 69341239"
             };
 
             // todo: persist client
